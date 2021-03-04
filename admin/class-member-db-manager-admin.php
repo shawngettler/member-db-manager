@@ -39,8 +39,9 @@ class Member_DB_Manager_Admin {
      * Display the admin page.
      */
     public function display_admin_page() {
-        $option_name = MEMBER_DB_MANAGER_OPTION;
-        $plugin_options = get_option($option_name);
+        // member record table
+        require_once ABSPATH.'wp-admin/includes/class-wp-list-table.php';
+        require_once 'class-member-db-manager-admin-member-list-table.php';
 
         require_once 'partials/admin-show-records.php';
     }

@@ -16,7 +16,8 @@ class Member_DB_Manager {
     // defaults
     public static $default_options = array(
         'version' => MEMBER_DB_MANAGER_VERSION,
-        'db_name' => 'member_db_manager_data'
+        'db_name' => 'member_db_manager_data',
+        'items_per_page' => 20
     );
     public static $default_schema = array(
         'id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY',
