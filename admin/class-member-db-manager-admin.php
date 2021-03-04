@@ -36,10 +36,13 @@ class Member_DB_Manager_Admin {
     }
 
     /**
-     * Display the default admin page.
+     * Display the admin page.
      */
     public function display_admin_page() {
-        require_once 'partials/admin_page.php';
+        $option_name = MEMBER_DB_MANAGER_OPTION;
+        $plugin_options = get_option($option_name);
+
+        require_once 'partials/admin-show-records.php';
     }
 
 }

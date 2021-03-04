@@ -13,6 +13,33 @@ class Member_DB_Manager {
     protected $loader;
 
 
+    // defaults
+    public static $default_options = array(
+        'version' => MEMBER_DB_MANAGER_VERSION,
+        'db_name' => 'member_db_manager_data'
+    );
+    public static $default_schema = array(
+        'id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY',
+        'hid SMALLINT UNSIGNED',
+        'membertype TINYINT UNSIGNED NOT NULL',
+        'memberterm TINYINT UNSIGNED NOT NULL',
+        'createdate DATE NOT NULL',
+        'updatedate DATE NOT NULL',
+        'expiredate DATE NOT NULL',
+        'firstname VARCHAR(32) NOT NULL',
+        'lastname VARCHAR(32) NOT NULL',
+        'email VARCHAR(64) NOT NULL',
+        'street VARCHAR(128) NOT NULL',
+        'city VARCHAR(32) NOT NULL',
+        'province CHAR(2) NOT NULL',
+        'country VARCHAR(32) NOT NULL',
+        'postalcode CHAR(6) NOT NULL',
+        'phone CHAR(10)',
+        'message VARCHAR(256)',
+        'hearabout TINYINT'
+    );
+
+
     /**
      * Load dependencies and set hooks for the plugin interface.
      */
