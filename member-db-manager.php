@@ -19,6 +19,7 @@ if(!defined('WPINC')) {
 
 
 // plugin version
+define('MEMBER_DB_MANAGER_PLUGIN_NAME', 'member-db-manager');
 define('MEMBER_DB_MANAGER_VERSION', '0.1.0');
 define('MEMBER_DB_MANAGER_OPTION', 'member_db_manager_option');
 

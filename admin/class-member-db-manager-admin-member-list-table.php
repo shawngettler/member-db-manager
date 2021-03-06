@@ -15,13 +15,19 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
 
 
     /**
-     * Define columns to be displayed.
+     * Override columns to be displayed.
      */
     public function get_columns() {
         return array(
             'firstname' => 'First Name',
             'lastname' => 'Last Name',
             'email' => 'Email',
+            'street' => 'Address',
+            'city' => 'City',
+            'province' => 'Prov',
+            'country' => 'Country',
+            'postalcode' => 'Postal Code',
+            'membertype' => 'Membership',
             'createdate' => 'Joined',
             'updatedate' => 'Renewed',
             'expiredate' => 'Expires'
@@ -29,12 +35,13 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
     }
 
     /**
-     * Define sortable columns.
+     * Override sortable columns.
      */
     public function get_sortable_columns() {
         return array(
             'createdate' => array('createdate', true),
-            'expiredate' => 'expiredate'
+            'updatedate' => array('updatedate', true),
+            'expiredate' => array('expiredate', true)
         );
     }
 
@@ -50,7 +57,7 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
 
 
     /**
-     * Query the database for items to display.
+     * Override prepare. Query the database for items to display.
      */
     public function prepare_items() {
         global $wpdb;
@@ -68,11 +75,21 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
         $this->_column_headers = array($this->get_columns(), array(), $this->get_sortable_columns());
 
         // query
-        $q = array(
-            'SELECT * FROM '.$table_name,
-            'LIMIT '.($items_page-1)*$items_per_page.', '.$items_per_page
-        );
-        $this->items = $wpdb->get_results(implode(' ', $q));
+        $q = 'SELECT * FROM '.$table_name;
+        if(isset($_GET['s']) && !empty($_GET['s'])) {
+            $qsearch = sanitize_text_field($_GET['s']);
+            $q .= $wpdb->prepare(' WHERE email LIKE %s', '%'.$wpdb->esc_like($qsearch).'%');
+            $q .= $wpdb->prepare(' OR firstname LIKE %s', '%'.$wpdb->esc_like($qsearch).'%');
+            $q .= $wpdb->prepare(' OR lastname LIKE %s', '%'.$wpdb->esc_like($qsearch).'%');
+        }
+        if(isset($_GET['orderby']) && array_key_exists($_GET['orderby'], $this->get_sortable_columns())) {
+            $qorderby = $_GET['orderby'];
+            $qorder = $_GET['order'] === 'desc' ? 'DESC' : 'ASC';
+            $q .= ' ORDER BY '.$qorderby.' '.$qorder;
+        }
+        $q .= ' LIMIT '.($items_page-1)*$items_per_page.', '.$items_per_page;
+
+        $this->items = $wpdb->get_results($q);
     }
 
 }

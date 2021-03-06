@@ -5,20 +5,14 @@
  */
 class Member_DB_Manager_Admin {
 
-    // plugin version
-    private $plugin_name;
-    private $plugin_version;
+    // record table
+    private $member_list_table;
 
 
     /**
      * Initialize admin functions.
-     *
-     * @param string $plugin_name plugin name
-     * @param string $plugin_version plugin version
      */
-    public function __construct($plugin_name, $plugin_version) {
-        $this->plugin_name = $plugin_name;
-        $this->plugin_version = $plugin_version;
+    public function __construct() {
     }
 
 
@@ -29,20 +23,29 @@ class Member_DB_Manager_Admin {
     }
 
     /**
-     * Add the plugin to the WordPress top-level menu.
+     * Register CSS dependencies.
+     */
+    public function enqueue_styles() {
+    }
+
+    /**
+     * Add the plugin to the WordPress top-level menu. Run any initial
+     * checks that may require a reload, then add the admin page.
      */
     public function add_admin_menu() {
-        add_menu_page('Member Database Manager', 'Member DB', 'manage_options', $this->plugin_name, array($this, 'display_admin_page'));
+        // prepare the record table
+        require_once ABSPATH.'wp-admin/includes/class-wp-list-table.php';
+        require_once 'class-member-db-manager-admin-member-list-table.php';
+        $this->member_list_table = new Member_DB_Manager_Admin_Member_List_Table();
+        $this->member_list_table->prepare_items();
+
+        add_menu_page('Member Database Manager', 'Member DB', 'manage_options', MEMBER_DB_MANAGER_PLUGIN_NAME, array($this, 'display_admin_page'));
     }
 
     /**
      * Display the admin page.
      */
     public function display_admin_page() {
-        // member record table
-        require_once ABSPATH.'wp-admin/includes/class-wp-list-table.php';
-        require_once 'class-member-db-manager-admin-member-list-table.php';
-
         require_once 'partials/admin-show-records.php';
     }
 
