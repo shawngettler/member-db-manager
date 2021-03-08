@@ -19,6 +19,7 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
      */
     public function get_columns() {
         return array(
+            'cb' => '<input type="checkbox" name="member[]" />',
             'firstname' => 'First Name',
             'lastname' => 'Last Name',
             'email' => 'Email',
@@ -55,6 +56,14 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
         echo '<span>'.$item->$column_name.'</span>';
     }
 
+    /**
+     * Table display for checkbox column.
+     *
+     * @param object $item database record
+     */
+    public function column_cb($item) {
+        echo '<input id="cb-select-'.$item->id.'" type="checkbox" name="member[]" value="'.$item->id.'" />';
+    }
 
     /**
      * Override prepare. Query the database for items to display.
@@ -65,31 +74,36 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
 
         $table_name = $wpdb->prefix.$plugin_options['db_name'];
 
+        // search terms
+        $qsearch = '';
+        if(isset($_GET['s']) && !empty($_GET['s'])) {
+            $qsearch .= $wpdb->prepare(' WHERE email LIKE %s', '%'.$wpdb->esc_like($_GET['s']).'%');
+            $qsearch .= $wpdb->prepare(' OR firstname LIKE %s', '%'.$wpdb->esc_like($_GET['s']).'%');
+            $qsearch .= $wpdb->prepare(' OR lastname LIKE %s', '%'.$wpdb->esc_like($_GET['s']).'%');
+        }
+
         // pagination
-        $items_count = $wpdb->get_var('SELECT COUNT(id) FROM '.$table_name);
-        $items_per_page = $plugin_options['items_per_page'];
+        $qcount = 'SELECT COUNT(id) FROM '.$table_name;
+        $items_count = $wpdb->get_var($qcount.$qsearch);
+
         $items_page = $this->get_pagenum();
+        $items_per_page = $plugin_options['items_per_page'];
         $this->set_pagination_args(array('total_items' => $items_count, 'per_page' => $items_per_page));
 
-        // column headers
-        $this->_column_headers = array($this->get_columns(), array(), $this->get_sortable_columns());
+        $qlimit = '';
+        if($items_per_page > $items_count) {
+            $qlimit = ' LIMIT '.($items_page-1)*$items_per_page.', '.$items_per_page;
+        }
+
+        // order
+        $qorder = '';
+        if(isset($_GET['orderby']) && array_key_exists($_GET['orderby'], $this->get_sortable_columns())) {
+            $qorder = ' ORDER BY '.$_GET['orderby'].' '.$_GET['order'];
+        }
 
         // query
-        $q = 'SELECT * FROM '.$table_name;
-        if(isset($_GET['s']) && !empty($_GET['s'])) {
-            $qsearch = sanitize_text_field($_GET['s']);
-            $q .= $wpdb->prepare(' WHERE email LIKE %s', '%'.$wpdb->esc_like($qsearch).'%');
-            $q .= $wpdb->prepare(' OR firstname LIKE %s', '%'.$wpdb->esc_like($qsearch).'%');
-            $q .= $wpdb->prepare(' OR lastname LIKE %s', '%'.$wpdb->esc_like($qsearch).'%');
-        }
-        if(isset($_GET['orderby']) && array_key_exists($_GET['orderby'], $this->get_sortable_columns())) {
-            $qorderby = $_GET['orderby'];
-            $qorder = $_GET['order'] === 'desc' ? 'DESC' : 'ASC';
-            $q .= ' ORDER BY '.$qorderby.' '.$qorder;
-        }
-        $q .= ' LIMIT '.($items_page-1)*$items_per_page.', '.$items_per_page;
-
-        $this->items = $wpdb->get_results($q);
+        $qselect = 'SELECT * FROM '.$table_name;
+        $this->items = $wpdb->get_results($qselect.$qsearch.$qorder.$qlimit);
     }
 
 }

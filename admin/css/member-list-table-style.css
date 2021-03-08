@@ -1,0 +1,52 @@
+/**
+ * Style sheet for Member_DB_Manager_Admin_Member_List_Table.
+ */
+
+.column-firstname {
+    width: 8%;
+}
+
+.column-lastname {
+    width: 8%;
+}
+
+.column-email {
+    width: 14%;
+}
+
+
+.column-street {
+}
+
+.column-city {
+    width: 7%;
+}
+
+.column-province {
+    width: 4%;
+}
+
+.column-country {
+    width: 7%;
+}
+
+.column-postalcode {
+    width: 6%;
+}
+
+
+.column-membertype {
+    width: 8%;
+}
+
+.column-createdate {
+    width: 6%;
+}
+
+.column-updatedate {
+    width: 6%;
+}
+
+.column-expiredate {
+    width: 6%;
+}
