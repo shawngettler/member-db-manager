@@ -77,9 +77,14 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
         // search terms
         $qsearch = '';
         if(isset($_GET['s']) && !empty($_GET['s'])) {
-            $qsearch .= $wpdb->prepare(' WHERE email LIKE %s', '%'.$wpdb->esc_like($_GET['s']).'%');
-            $qsearch .= $wpdb->prepare(' OR firstname LIKE %s', '%'.$wpdb->esc_like($_GET['s']).'%');
-            $qsearch .= $wpdb->prepare(' OR lastname LIKE %s', '%'.$wpdb->esc_like($_GET['s']).'%');
+            $searchterms = explode(' ', $_GET['s']);
+            $searchcols = array('email', 'firstname', 'lastname');
+            foreach($searchterms as $s) {
+                foreach($searchcols as $c) {
+                    $qsearch .= $qsearch === '' ? ' WHERE ' : ' OR ';
+                    $qsearch .= $wpdb->prepare($c.' LIKE %s', '%'.$wpdb->esc_like($s).'%');
+                }
+            }
         }
 
         // pagination
