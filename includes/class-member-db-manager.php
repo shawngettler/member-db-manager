@@ -54,9 +54,10 @@ class Member_DB_Manager {
         require_once plugin_dir_path(dirname(__FILE__)).'admin/class-member-db-manager-admin.php';
         $plugin_admin = new Member_DB_Manager_Admin();
 
+        $this->loader->load_action('admin_menu', $plugin_admin, 'add_admin_menu');
+        $this->loader->load_action('admin_init', $plugin_admin, 'init_admin_page');
         $this->loader->load_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
         $this->loader->load_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
-        $this->loader->load_action('admin_menu', $plugin_admin, 'add_admin_menu');
     }
 
     /**
