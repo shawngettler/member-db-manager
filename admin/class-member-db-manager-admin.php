@@ -67,8 +67,8 @@ class Member_DB_Manager_Admin {
                 require_once 'class-member-db-manager-admin-member-form.php';
                 $this->member_form = new Member_DB_Manager_Admin_Member_Form();
 
-                if(isset($_POST['action']) && $_POST['action'] === 'createmember') {
-                    $this->member_form->insert();
+                if(isset($_POST['action'])) {
+                    $this->member_form->process();
                 } else {
                     $this->member_form->prepare();
                 }

@@ -2,6 +2,10 @@
  * Style sheet for Member_DB_Manager_Admin_Member_List_Table.
  */
 
+.column-edit {
+    width: 1.0em;
+}
+
 .column-firstname {
     width: 8%;
 }

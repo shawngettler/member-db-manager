@@ -62,9 +62,9 @@ class Member_DB_Manager_Admin_Member_Form {
     }
 
     /**
-     * Process form data and insert record.
+     * Process form data and insert or update record.
      */
-    public function insert() {
+    public function process() {
         global $wpdb;
         $plugin_options = get_option(MEMBER_DB_MANAGER_OPTION);
 
@@ -85,8 +85,12 @@ class Member_DB_Manager_Admin_Member_Form {
             'updatedate' => $_POST['updatedate'],
             'expiredate' => $_POST['expiredate']
         );
-        $wpdb->insert($table_name, $memberdata);
 
+        if($_POST['action'] == 'updatemember') {
+            $wpdb->update($table_name, $memberdata, array('id' => $_POST['id']));
+        } else {
+            $wpdb->insert($table_name, $memberdata);
+        }
         wp_redirect(add_query_arg('view', 'show'));
     }
 
@@ -94,11 +98,16 @@ class Member_DB_Manager_Admin_Member_Form {
      * Displays the form.
      */
     public function display() {
+        if(isset($this->item->id)) {
+            echo '<input type="hidden" name="action" value="updatemember" />';
+            echo '<input type="hidden" name="id" value="'.$this->item->id.'" />';
+        } else {
+            echo '<input type="hidden" name="action" value="createmember" />';
+        }
 
 ?>
 <table class="form-table">
     <tbody>
-        <input type="hidden" name="action" value="createmember" />
         <tr class="form-field"><th scope="row">First Name</th><td><input type="text" name="firstname" value="<?php echo $this->item->firstname; ?>" /></td></tr>
         <tr class="form-field"><th scope="row">Last Name</th><td><input type="text" name="lastname" value="<?php echo $this->item->lastname; ?>" /></td></tr>
         <tr class="form-field"><th scope="row">Email</th><td><input type="text" name="email" value="<?php echo $this->item->email; ?>" /></td></tr>
@@ -109,14 +118,18 @@ class Member_DB_Manager_Admin_Member_Form {
         <tr class="form-field"><th scope="row">Postal Code</th><td><input type="text" name="postalcode" value="<?php echo $this->item->postalcode; ?>" /></td></tr>
         <tr class="form-field"><th scope="row">Membership Type</th><td><input type="text" name="membertype" value="<?php echo $this->item->membertype; ?>" /></td></tr>
         <tr class="form-field"><th scope="row">Membership Term</th><td><input type="text" name="memberterm" value="<?php echo $this->item->memberterm; ?>" /></td></tr>
-        <tr class="form-field"><th scope="row">Joined</th><td><input type="text" name="createdate" value="<?php echo $this->item->createdate; ?>" /></td></tr>
-        <tr class="form-field"><th scope="row">Renewed</th><td><input type="text" name="updatedate" value="<?php echo $this->item->updatedate; ?>" /></td></tr>
-        <tr class="form-field"><th scope="row">Expires</th><td><input type="text" name="expiredate" value="<?php echo $this->item->expiredate; ?>" /></td></tr>
+        <tr class="form-field"><th scope="row">Joined</th><td><input type="date" name="createdate" value="<?php echo $this->item->createdate; ?>" /></td></tr>
+        <tr class="form-field"><th scope="row">Renewed</th><td><input type="date" name="updatedate" value="<?php echo $this->item->updatedate; ?>" /></td></tr>
+        <tr class="form-field"><th scope="row">Expires</th><td><input type="date" name="expiredate" value="<?php echo $this->item->expiredate; ?>" /></td></tr>
     </tbody>
 </table>
-<p class="submit"><input type="submit" name="createmember" class="button button-primary" value="Add New Member" /></p>
 <?php
 
+        if(isset($this->item->id)) {
+            echo '<p class="submit"><input type="submit" class="button button-primary" value="Update Member" /></p>';
+        } else {
+            echo '<p class="submit"><input type="submit" class="button button-primary" value="Add New Member" /></p>';
+        }
     }
 
 }

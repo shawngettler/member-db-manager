@@ -20,6 +20,7 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
     public function get_columns() {
         return array(
             'cb' => '<input type="checkbox" name="member[]" />',
+            'edit' => '',
             'firstname' => 'First Name',
             'lastname' => 'Last Name',
             'email' => 'Email',
@@ -63,6 +64,18 @@ class Member_DB_Manager_Admin_Member_List_Table extends WP_List_Table {
      */
     public function column_cb($item) {
         echo '<input id="cb-select-'.$item->id.'" type="checkbox" name="member[]" value="'.$item->id.'" />';
+    }
+
+    /**
+     * Table display for edit button column.
+     *
+     * @param object $item database record
+     */
+    public function column_edit($item) {
+        $actions = array(
+            'edit' => '<a href="?page=member-db-manager&view=edit&member='.$item->id.'"><span class="dashicons dashicons-edit"></span></a>'
+        );
+        echo $this->row_actions($actions);
     }
 
     /**
